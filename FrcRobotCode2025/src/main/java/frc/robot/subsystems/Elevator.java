@@ -15,10 +15,10 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ArmConstants;
+import frc.robot.LiveTuning;
+import frc.robot.Constants.ElevatorConstants;
 
-
-public class CoralSubsystem extends SubsystemBase{
+public class Elevator extends SubsystemBase{
 
     public enum Setpoint {
         kFeederStation,
@@ -28,35 +28,38 @@ public class CoralSubsystem extends SubsystemBase{
         kLevel4;
       }
 
-    SparkMax elevatorLeader = new SparkMax(ArmConstants.arm0ID, MotorType.kBrushless);
-    SparkMax elevatorFollower = new SparkMax(ArmConstants.arm1ID, MotorType.kBrushless);
-    SparkMaxConfig leaderConfig, followConfig; 
+    SparkMax elevatorLeader = new SparkMax(ElevatorConstants.Elevator0ID, MotorType.kBrushless);
+    SparkMax elevatorFollower = new SparkMax(ElevatorConstants.Elevator1ID, MotorType.kBrushless);
+    SparkMaxConfig leaderConfig, followConfig;
+    double kp,ki,kd; 
     private final RelativeEncoder encoder;
-    private final SparkClosedLoopController armPid;
+    private final SparkClosedLoopController ElevatorPid;
     double feedfoward;
     boolean wasResetBylimit = false;
-    private double elevatorCurrentTarget = ArmConstants.kFeederStation;
+    private double elevatorCurrentTarget = ElevatorConstants.kFeederStation;
     DigitalInput limit = new DigitalInput(3);
+    LiveTuning tuning;
 
     
-    public CoralSubsystem(){
-        
+    public Elevator(){
+
+
+        tuning = new LiveTuning(kp, ki, kd, "Elevator");
 
         leaderConfig = new SparkMaxConfig();
         followConfig = new SparkMaxConfig();
 
         encoder = elevatorLeader.getEncoder();
-        leaderConfig.encoder.positionConversionFactor(ArmConstants.ArmPosConversionFactor);
-        leaderConfig.encoder.velocityConversionFactor(ArmConstants.ArmVeloConversionFactor);
+        leaderConfig.encoder.positionConversionFactor(ElevatorConstants.ArmPosConversionFactor);
+        leaderConfig.encoder.velocityConversionFactor(ElevatorConstants.ArmVeloConversionFactor);
 
         leaderConfig.inverted(true)
         .idleMode(IdleMode.kBrake)
-        .smartCurrentLimit(40,60);
-        
-        leaderConfig.softLimit.forwardSoftLimitEnabled(true)
+        .smartCurrentLimit(40,60)
+        .softLimit.forwardSoftLimitEnabled(true)
         .reverseSoftLimitEnabled(true)
-        .forwardSoftLimit(ArmConstants.fwdSoftLimit)
-        .reverseSoftLimit(ArmConstants.revrsSoftLimit);
+        .forwardSoftLimit(ElevatorConstants.fwdSoftLimit)
+        .reverseSoftLimit(ElevatorConstants.revrsSoftLimit);
 
 
         followConfig.follow(elevatorLeader, true)
@@ -64,18 +67,18 @@ public class CoralSubsystem extends SubsystemBase{
         .smartCurrentLimit(40,60);
 
 
-        armPid = elevatorLeader.getClosedLoopController();
+        ElevatorPid = elevatorLeader.getClosedLoopController();
         leaderConfig.closedLoop
-        .p(ArmConstants.Kp)
-        .i(ArmConstants.Ki)
-        .d(ArmConstants.Kd)
-        .iZone(ArmConstants.Kiz)
-        .outputRange(ArmConstants.kArmMinOutput,
-         ArmConstants.kArmMaxOutput)
-        .maxMotion.maxVelocity(ArmConstants.KMaxSpeed)
-        .maxAcceleration(ArmConstants.KmaxAcce)
+        .p(kp)
+        .i(ki)
+        .d(kd)
+        .iZone(ElevatorConstants.Kiz)
+        .outputRange(ElevatorConstants.kArmMinOutput,
+         ElevatorConstants.kArmMaxOutput)
+        .maxMotion.maxVelocity(ElevatorConstants.KMaxSpeed)
+        .maxAcceleration(ElevatorConstants.KmaxAcce)
         .positionMode(MAXMotionPositionMode.kMAXMotionTrapezoidal)
-        .allowedClosedLoopError(ArmConstants.MaxAllowedError);
+        .allowedClosedLoopError(ElevatorConstants.MaxAllowedError);
         
          
         
@@ -89,8 +92,8 @@ public class CoralSubsystem extends SubsystemBase{
     }
 
     public void subuysytemGoToSetpoit(double setpoint){
-        armPid.setReference(elevatorCurrentTarget, ControlType.kMAXMotionPositionControl,
-         null, ArmConstants.ArmFeedFoward);
+        ElevatorPid.setReference(elevatorCurrentTarget, ControlType.kMAXMotionPositionControl,
+         null, ElevatorConstants.ElevatorFeedFoward);
     }
 
     private void ResetOnLimitSwitch(){
@@ -118,33 +121,35 @@ public class CoralSubsystem extends SubsystemBase{
             () -> {
               switch (setpoint) {
                 case kFeederStation:
-                  elevatorCurrentTarget = ArmConstants.kFeederStation;
+                  elevatorCurrentTarget = ElevatorConstants.kFeederStation;
                   break;
                 case kLevel1:
 
-                  elevatorCurrentTarget = ArmConstants.kL1;
+                  elevatorCurrentTarget = ElevatorConstants.kL1;
                   break;
                 case kLevel2:
-                  elevatorCurrentTarget = ArmConstants.kL2;
+                  elevatorCurrentTarget = ElevatorConstants.kL2;
                   break;
                 case kLevel3:
-                  elevatorCurrentTarget = ArmConstants.kL3;
+                  elevatorCurrentTarget = ElevatorConstants.kL3;
                   break;
                 case kLevel4:
-                  elevatorCurrentTarget = ArmConstants.kL4;
+                  elevatorCurrentTarget = ElevatorConstants.kL4;
                   break;
               }
             });
       }
 
 
-    public void periodic(){
-        ResetOnLimitSwitch();
-        double pos = encoder.getPosition();
-        double velo = encoder.getVelocity();
-        SmartDashboard.putNumber("EncoderCurrentPos", pos);
-        SmartDashboard.putNumber("EncoderCurrentVelo", velo);
-        SmartDashboard.putNumber("EncoderVeloSetPoint", 30);
+    @Override
+    public void periodic() {
+      ResetOnLimitSwitch();
+      tuning.updatePID();
+      double pos = encoder.getPosition();
+      double velo = encoder.getVelocity();
+      SmartDashboard.putNumber("EncoderCurrentPos", pos);
+      SmartDashboard.putNumber("EncoderCurrentVelo", velo);
+      SmartDashboard.putNumber("EncoderVeloSetPoint", 30);
     }
         
 

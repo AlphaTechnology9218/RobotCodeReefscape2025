@@ -1,26 +1,29 @@
-/*package frc.robot.commands.ArmCmds;
+package frc.robot.commands.ArmCmds;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.Arm;
 
 import edu.wpi.first.math.controller.PIDController;
 
 public class ArmDrivePIDCmd extends Command{
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ArmSubsystem armSubsystem;
-  private double spRest, spSpeaker, spAmp, spPass, sp;
+  private final Arm armSubsystem;
+  private double spRest, spSource, spL1, spL2, spL3, spL4, sp;
   private final int POV;
   boolean releaseAtSetPoint;
 
-  private PIDController pidController = new PIDController(ArmConstants.kP,ArmConstants.kI, ArmConstants.kD);
+  private PIDController pidController = 
+  new PIDController(Arm.getP(),Arm.getI(), Arm.getD());
 
-  public ArmDrivePIDCmd(ArmSubsystem subsystem, int POV, boolean releaseAtSetPoint){
+  public ArmDrivePIDCmd(Arm subsystem, int POV, boolean releaseAtSetPoint){
     this.armSubsystem = subsystem;
-    this.spRest = ArmConstants.RestSetPoint;
-    this.spSpeaker = ArmConstants.ShooterSetPoint;
-    this.spAmp = ArmConstants.AmpSetPoint;
-    this.spPass = 0.60;
+    this.spRest = ArmConstants.restSetpoint;
+    this.spSource = ArmConstants.sourceSetpoint;
+    this.spL1 = ArmConstants.L1setPoint;
+    this.spL2 = ArmConstants.L2setPoint;
+    this.spL3 = ArmConstants.L3setPoint;
+    this.spL4 = ArmConstants.L4setPoint;
     this.sp = this.spRest;
     this.POV = POV;
     this.pidController.setTolerance(0.1);
@@ -40,21 +43,27 @@ public class ArmDrivePIDCmd extends Command{
       case 0:
         sp = spRest;
         break;
-      case 90:
-        sp = spSpeaker;
+      case 1:
+        sp = spSource;
         break;
-      case 180:
-        sp = spAmp; 
+      case 2:
+        sp = spL1; 
         break;
-      case 270:
-        sp = spPass;
+      case 3:
+        sp = spL2;
+        break;
+      case 4:
+        sp = spL3;
+        break;
+      case 5:
+        sp = spL4;
         break;
       }
+
       pidController.setSetpoint(sp);
-    //&& armSubsystem.getAbsEncoder().getAbsolutePosition() >= sp
-      double speed = pidController.calculate(armSubsystem.getAbsEncoder().getAbsolutePosition() - 
-      armSubsystem.getAbsEncoder().getPositionOffset());
-      if (armSubsystem.getAbsEncoder().getAbsolutePosition() != 0){
+
+      double speed = pidController.calculate(armSubsystem.getEncoder().get());
+      if (armSubsystem.getEncoder().get() != 0){
         if (speed < 0 ){
           armSubsystem.armDrive(0.2);
         }
@@ -77,4 +86,4 @@ public class ArmDrivePIDCmd extends Command{
   
   
     
-}*/
+}

@@ -6,7 +6,6 @@ package frc.robot;
 
 import java.io.File;
 
-import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.MathUtil;
@@ -20,20 +19,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-//import frc.robot.commands.ArmCmds.AmpAnglePIDCmd;
-//import frc.robot.commands.ArmCmds.ArmDrive;
-//import frc.robot.commands.ArmCmds.ArmDrivePIDCmd;
-//import frc.robot.commands.ArmCmds.RestAnglePIDCmd;
-//import frc.robot.commands.ArmCmds.ShooterAnglePIDCmd;
-import frc.robot.commands.FlyWheelCmds.FlyWheelAmp;
-import frc.robot.commands.FlyWheelCmds.FlyWheelCmd;
-import frc.robot.commands.IntakeCmds.IntakeCmd;
-import frc.robot.commands.IntakeCmds.IntakeInCmd;
 import frc.robot.commands.VisionCmds.DriveAimAtTarget;
-//import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.CoralSubsystem;
-import frc.robot.subsystems.FlyWheel;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /**
@@ -46,11 +33,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                          "swerve"));
-  
-  //private final ArmSubsystem arm = new ArmSubsystem();
-  private final CoralSubsystem trapArm = new CoralSubsystem(); 
-  private final Intake intake = new Intake();
-  private final FlyWheel flywheel = new FlyWheel();
+  private final Elevator elevator = new Elevator(); 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final static CommandJoystick m_driverController = new CommandJoystick(Constants.OperatorConstants.kDriverControllerPort);
   private final CommandXboxController m_systemController = new CommandXboxController(Constants.OperatorConstants.kSystemControllerPort);
@@ -59,12 +42,12 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    
 
-    NamedCommands.registerCommand("IntakeInCmd", new IntakeInCmd(intake));
-    NamedCommands.registerCommand("FlyWheelCmd", new FlyWheelCmd(flywheel, 1800));
-    //NamedCommands.registerCommand("ShooterAnglePIDCmd", new ShooterAnglePIDCmd(arm));
-    //NamedCommands.registerCommand("AmpAnglePIDCmd", new AmpAnglePIDCmd(arm));
-    //NamedCommands.registerCommand("RestAnglePIDCmd", new RestAnglePIDCmd(arm));
+    //Qualquer comando nomeado que será utilizado no pathplannner deve ser registrado
+    //Exemplo:
+    //NamedCommands.registerCommand("IntakeInCmd", new IntakeInCmd(intake));
+    
     // Configure the trigger bindings
     configureBindings();
 
@@ -87,8 +70,6 @@ public class RobotContainer {
     
 
       drivebase.setDefaultCommand(baseDriveCommand);
-      intake.setDefaultCommand(new IntakeCmd(intake, () -> m_systemController.getRightTriggerAxis(),
-      () -> m_systemController.getLeftTriggerAxis()));
       }
 
     public static void setRightRumbleDriver(double rumble){
@@ -112,14 +93,6 @@ public class RobotContainer {
     
     m_driverController.button(3).onTrue(Commands.runOnce(drivebase::zeroGyro));
     m_driverController.button(4).onTrue(Commands.runOnce(drivebase::resetIMU));
-
-    m_driverController.button(8).toggleOnTrue(new FlyWheelCmd(flywheel, 1800));
-    m_systemController.leftBumper().toggleOnTrue(new FlyWheelAmp(flywheel));
-    /*m_driverController.button(7).onTrue(trapArm.setArmGoalCommand(50, 10));
-    m_driverController.button(9).onTrue(trapArm.setArmGoalCommand(40, 10));
-    m_driverController.button(10).onTrue(trapArm.setArmGoalCommand(30, 10));
-    m_driverController.button(11).onTrue(trapArm.setArmGoalCommand(20, 10));
-    m_driverController.button(12).onTrue(trapArm.setArmGoalCommand(0, -6));*/
    
   }
 

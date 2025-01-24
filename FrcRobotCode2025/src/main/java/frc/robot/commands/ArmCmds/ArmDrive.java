@@ -1,20 +1,20 @@
-/*package frc.robot.commands.ArmCmds;
+package frc.robot.commands.ArmCmds;
 
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.Arm;
 
 public class ArmDrive extends Command{
 
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 
-    private ArmSubsystem arm;
+    private Arm arm;
     private Supplier<Double> speed;
-    private double sp;
+   
     
 
-    public ArmDrive(ArmSubsystem subsystem, Supplier<Double> speed){
+    public ArmDrive(Arm subsystem, Supplier<Double> speed){
         this.arm = subsystem;
         this.speed = speed;
         addRequirements(subsystem);
@@ -29,12 +29,8 @@ public class ArmDrive extends Command{
  
     @Override
     public void execute(){
-        sp = arm.getAbsEncoder().getAbsolutePosition() - arm.getAbsEncoder().getPositionOffset();
-        if(sp > 0.8){
-            arm.armDrive(0.4);
-        }else{
-            arm.armDrive(speed.get());
-        }
+        arm.armDrive(speed.get());
+        
          
     }
 
@@ -47,4 +43,4 @@ public class ArmDrive extends Command{
     public boolean isFinished(){
         return false;  
     }
-}*/
+}
