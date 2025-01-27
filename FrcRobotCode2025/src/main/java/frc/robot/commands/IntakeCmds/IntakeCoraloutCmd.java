@@ -8,8 +8,10 @@ public class IntakeCoraloutCmd extends Command{
     CoralIntake coralintakeSubsystem;
 
 
-    public IntakeCoraloutCmd(){
-      
+    public IntakeCoraloutCmd(CoralIntake subsystem){
+        this.coralintakeSubsystem = subsystem;
+
+        addRequirements(subsystem);
     }
 
     @Override

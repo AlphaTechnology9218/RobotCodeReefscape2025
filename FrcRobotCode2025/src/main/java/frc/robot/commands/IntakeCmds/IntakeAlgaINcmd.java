@@ -1,7 +1,7 @@
 package frc.robot.commands.IntakeCmds;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.AlgaeIntakeConstants;
 import frc.robot.subsystems.AlgaeIntake;
 
 public class IntakeAlgaINcmd extends Command{
@@ -23,9 +23,11 @@ public class IntakeAlgaINcmd extends Command{
     @Override
     public void execute() {
          if(AlgaeIntakeSubsystem.getCurrent() < 30){
-            AlgaeIntakeSubsystem.IntakeSetMoveSetPoint(1);
+            AlgaeIntakeSubsystem.IntakeSetMoveSetPoint(
+                AlgaeIntakeConstants.IntakeCollectSetPoint);
          }else{
-            AlgaeIntakeSubsystem.IntakeSetMoveSetPoint(2);
+            AlgaeIntakeSubsystem.IntakeSetMoveSetPoint(
+                AlgaeIntakeConstants.intakeHoldSetPoint);
          }
         
     }

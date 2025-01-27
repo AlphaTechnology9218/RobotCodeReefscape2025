@@ -10,13 +10,14 @@ public class ArmDrive extends Command{
     @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
 
     private Arm arm;
-    private Supplier<Double> speed;
+    private Supplier<Double> speed, speed2;
    
     
 
-    public ArmDrive(Arm subsystem, Supplier<Double> speed){
+    public ArmDrive(Arm subsystem, Supplier<Double> speed, Supplier<Double> speed2){
         this.arm = subsystem;
         this.speed = speed;
+        this.speed2 = speed2;
         addRequirements(subsystem);
 
     }
@@ -29,7 +30,8 @@ public class ArmDrive extends Command{
  
     @Override
     public void execute(){
-        arm.armDrive(speed.get());
+        arm.ShouderDrive(speed.get());
+        arm.WristDrive(speed2.get());
         
          
     }

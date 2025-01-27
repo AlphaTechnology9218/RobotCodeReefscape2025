@@ -75,7 +75,6 @@ public final class Constants {
     public static final double revrsSoftLimit = 0;
     public static final double kHomePosition = 0.0;
     public static final double MaxAllowedError= 0.4;
-    public static final double ElevatorFeedFoward = 0.0;
     public static final double kFeederStation = 0;
     public static final double kL1 = 0;
     public static final double kL2 = 0;
@@ -97,22 +96,33 @@ public final class Constants {
       public static final int limitSwitchChannel = 6;
       public static final double MoveMotorFwdSoftLimit = 50;
       public static final double MoveMotorRvrsSoftLimit = 50;
+      public static final double IntakeCollectSetPoint = 0;
+      public static final double intakeHoldSetPoint = 0;
   }
 
   public static final class ArmConstants
   {
-    public static final int ArmMotorID = 19;
-    public static final int EncoderDigitalSource = 5;
-    public static final double fwdSoftLimit = 0;
-    public static final double rvrsSoftLimit = 0;
+    public static final int ShoulderMotorID = 19;
+    public static final int WristMotorID = 20;
+    public static final int ShoulderDigitalSource = 5;
+    public static final int WristDigitalSource = 6;
+    public static final double SfwdSoftLimit = 0;
+    public static final double SrvrsSoftLimit = 0;
+    public static final double WfwdSoftLimit = 0;
+    public static final double WrvrsSoftLimit = 0;
     public static final double restSetpoint = 0;
     public static final double sourceSetpoint = 0;
     public static final double L1setPoint = 0;
     public static final double L2setPoint = 0;
     public static final double L3setPoint = 0;
     public static final double L4setPoint = 0;
-    public static final double Kp = 0;
-    public static final double Ki = 0;
-    public static final double Kd = 0;
+    public static final double WristCollect = 0;
+    public static final double WristScore = 0;
+    public static final double Kps = 0;
+    public static final double Kis = 0;
+    public static final double Kds = 0;
+    public static final double Kpw = 0;
+    public static final double Kiw = 0;
+    public static final double Kdw = 0;
   }
 }

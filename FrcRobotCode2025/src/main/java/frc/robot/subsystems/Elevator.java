@@ -11,6 +11,8 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,6 +32,7 @@ public class Elevator extends SubsystemBase{
 
     SparkMax elevatorLeader = new SparkMax(ElevatorConstants.Elevator0ID, MotorType.kBrushless);
     SparkMax elevatorFollower = new SparkMax(ElevatorConstants.Elevator1ID, MotorType.kBrushless);
+    ElevatorFeedforward ElevFeedFoward = new ElevatorFeedforward(0, 0, 0);
     SparkMaxConfig leaderConfig, followConfig;
     double kp,ki,kd; 
     private final RelativeEncoder encoder;
@@ -92,8 +95,9 @@ public class Elevator extends SubsystemBase{
     }
 
     public void subuysytemGoToSetpoit(double setpoint){
+        feedfoward = ElevFeedFoward.calculate(ElevatorConstants.KMaxSpeed, ElevatorConstants.KmaxAcce);
         ElevatorPid.setReference(elevatorCurrentTarget, ControlType.kMAXMotionPositionControl,
-         null, ElevatorConstants.ElevatorFeedFoward);
+         null, feedfoward);
     }
 
     private void ResetOnLimitSwitch(){

@@ -9,31 +9,38 @@ import edu.wpi.first.math.controller.PIDController;
 public class ArmDrivePIDCmd extends Command{
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Arm armSubsystem;
-  private double spRest, spSource, spL1, spL2, spL3, spL4, sp;
+  private double spRest, spSource, spWCollect, spWScore, spL1,
+   spL2, spL3, spL4, spS, spW;
   private final int POV;
   boolean releaseAtSetPoint;
 
-  private PIDController pidController = 
-  new PIDController(Arm.getP(),Arm.getI(), Arm.getD());
-
+  private PIDController shoulderPidController = 
+  new PIDController(Arm.getsP(),Arm.getsI(), Arm.getsD());
+  private PIDController wristPidController =
+   new PIDController(Arm.getwP(), Arm.getwI(), Arm.getwD());
+   
   public ArmDrivePIDCmd(Arm subsystem, int POV, boolean releaseAtSetPoint){
     this.armSubsystem = subsystem;
     this.spRest = ArmConstants.restSetpoint;
     this.spSource = ArmConstants.sourceSetpoint;
+    this.spWCollect = ArmConstants.WristCollect;
+    this.spWScore = ArmConstants.WristScore;
     this.spL1 = ArmConstants.L1setPoint;
     this.spL2 = ArmConstants.L2setPoint;
     this.spL3 = ArmConstants.L3setPoint;
     this.spL4 = ArmConstants.L4setPoint;
-    this.sp = this.spRest;
+    this.spS = this.spRest;
+    this.spW = this.spWScore;
     this.POV = POV;
-    this.pidController.setTolerance(0.1);
+    this.shoulderPidController.setTolerance(0.1);
     this.releaseAtSetPoint = releaseAtSetPoint;
 
     addRequirements(subsystem);
   }
   @Override
   public void initialize() {
-    pidController.reset();
+    shoulderPidController.reset();
+    wristPidController.reset();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -41,46 +48,57 @@ public class ArmDrivePIDCmd extends Command{
   public void execute() {
     switch (POV){
       case 0:
-        sp = spRest;
+        spS = spRest;
+        spW = spWScore;
         break;
       case 1:
-        sp = spSource;
+        spS = spSource;
+        spW = spWCollect;
         break;
       case 2:
-        sp = spL1; 
+        spS = spL1;
+        spW = spWScore; 
         break;
       case 3:
-        sp = spL2;
+        spS = spL2;
+        spW = spWScore;
         break;
       case 4:
-        sp = spL3;
+        spS = spL3;
+        spW = spWScore;
         break;
       case 5:
-        sp = spL4;
+        spS = spL4;
+        spW = spWScore;
         break;
       }
 
-      pidController.setSetpoint(sp);
+      shoulderPidController.setSetpoint(spS);
+      wristPidController.setSetpoint(spW);
 
-      double speed = pidController.calculate(armSubsystem.getEncoder().get());
-      if (armSubsystem.getEncoder().get() != 0){
-        if (speed < 0 ){
-          armSubsystem.armDrive(0.2);
+      double speedS = shoulderPidController.calculate(armSubsystem.getShoulderEncoder().get());
+      double speedW = wristPidController.calculate(armSubsystem.getWristEncoder().get());
+      
+      if (armSubsystem.getShoulderEncoder().get() != 0){
+        if (speedS < 0 ){
+          armSubsystem.ShouderDrive(0.2);
+          armSubsystem.WristDrive(speedW);
         }
         else{
-          armSubsystem.armDrive(-speed);
+          armSubsystem.ShouderDrive(speedS);
+          armSubsystem.WristDrive(speedW);
         }
       }
   
     }
     
   public void end(boolean interrupted) {
-    armSubsystem.stopArm();
+    armSubsystem.stopArm();;
   }
 
   @Override
   public boolean isFinished() {
-    return pidController.atSetpoint() && releaseAtSetPoint;
+    return shoulderPidController.atSetpoint() && releaseAtSetPoint;
   }
 
   

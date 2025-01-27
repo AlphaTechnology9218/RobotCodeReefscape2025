@@ -19,7 +19,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.IntakeCmds.IntakeCoralINCmd;
+import frc.robot.commands.IntakeCmds.IntakeCoraloutCmd;
 import frc.robot.commands.VisionCmds.DriveAimAtTarget;
+import frc.robot.subsystems.AlgaeIntake;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.CoralIntake;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -34,6 +39,9 @@ public class RobotContainer {
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                          "swerve"));
   private final Elevator elevator = new Elevator(); 
+  private final Arm arm = new Arm();
+  private final CoralIntake CIntake = new CoralIntake();
+  private final AlgaeIntake AIntake = new AlgaeIntake();
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final static CommandJoystick m_driverController = new CommandJoystick(Constants.OperatorConstants.kDriverControllerPort);
   private final CommandXboxController m_systemController = new CommandXboxController(Constants.OperatorConstants.kSystemControllerPort);
@@ -86,6 +94,9 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+
+    m_systemController.rightBumper().toggleOnTrue(new IntakeCoralINCmd(CIntake));
+    m_systemController.leftBumper().toggleOnTrue(new IntakeCoraloutCmd(CIntake));
 
      m_driverController.button(2).toggleOnTrue(new DriveAimAtTarget(drivebase,
       () -> MathUtil.applyDeadband(-m_driverController.getY() * Math.max(-m_driverController.getRawAxis(3)+ 1, 0.3), Constants.OperatorConstants.LEFT_X_DEADBAND),

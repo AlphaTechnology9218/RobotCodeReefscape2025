@@ -8,8 +8,10 @@ public class IntakeAlgaoutCmd extends Command{
     AlgaeIntake algaintakeSubsystem;
 
 
-    public IntakeAlgaoutCmd(){
-      
+    public IntakeAlgaoutCmd(AlgaeIntake subsystem){
+        this.algaintakeSubsystem = subsystem;
+        
+        addRequirements(subsystem);
     }
 
     @Override
