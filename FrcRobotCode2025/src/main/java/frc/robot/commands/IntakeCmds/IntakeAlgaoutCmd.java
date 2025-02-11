@@ -1,43 +1,41 @@
 package frc.robot.commands.IntakeCmds;
-
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.AlgaeIntakeConstants;
 import frc.robot.subsystems.AlgaeIntake;
 
-public class IntakeAlgaoutCmd extends Command{
+public class IntakeAlgaOutCmd extends Command{
     
-    AlgaeIntake algaintakeSubsystem;
+    AlgaeIntake AlgaeIntakeSubsystem;
 
-
-    public IntakeAlgaoutCmd(AlgaeIntake subsystem){
-        this.algaintakeSubsystem = subsystem;
-        
+    public IntakeAlgaOutCmd(AlgaeIntake subsystem){
+        this.AlgaeIntakeSubsystem = subsystem;
+     
         addRequirements(subsystem);
     }
 
     @Override
     public void initialize() {
-    
+        
     }
 
     @Override
     public void execute() {
-         algaintakeSubsystem.intakeDrive (-0.4);
+        AlgaeIntakeSubsystem.intakeDrive(AlgaeIntakeConstants.IntakeRealeaseSpeed);      
         
     }
 
     @Override
     public void end(boolean interrupted) {
-        algaintakeSubsystem.intakeStop();
+        AlgaeIntakeSubsystem.intakeStop();
     }
 
     @Override
     public boolean isFinished() {
-    if (algaintakeSubsystem.getCurrent()>20){
+        if (AlgaeIntakeSubsystem.getCurrent()>30){
         return true;
     }
     else{
         return false;
     }
-      
     }
 }

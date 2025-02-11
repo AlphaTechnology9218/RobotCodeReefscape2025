@@ -22,10 +22,10 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.IntakeCmds.IntakeCoralINCmd;
 import frc.robot.commands.IntakeCmds.IntakeCoraloutCmd;
 import frc.robot.commands.VisionCmds.DriveAimAtTarget;
-import frc.robot.subsystems.AlgaeIntake;
-import frc.robot.subsystems.Arm;
+//import frc.robot.subsystems.AlgaeIntake;
+//import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.CoralIntake;
-import frc.robot.subsystems.Elevator;
+//import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /**
@@ -38,12 +38,14 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                          "swerve"));
-  private final Elevator elevator = new Elevator(); 
-  private final Arm arm = new Arm();
+  /*private final Elevator elevator = new Elevator(); 
+  private final Arm arm = new Arm();*/
   private final CoralIntake CIntake = new CoralIntake();
-  private final AlgaeIntake AIntake = new AlgaeIntake();
+  //private final AlgaeIntake AIntake = new AlgaeIntake();
+  
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final static CommandJoystick m_driverController = new CommandJoystick(Constants.OperatorConstants.kDriverControllerPort);
+  //private final static CommandJoystick m_driverController = new CommandJoystick(Constants.OperatorConstants.kDriverControllerPort);
+  private final static CommandXboxController m_driverController = new CommandXboxController(Constants.OperatorConstants.kDriverControllerPort);
   private final CommandXboxController m_systemController = new CommandXboxController(Constants.OperatorConstants.kSystemControllerPort);
 
   private SendableChooser<Command> chooser = new SendableChooser<>();
@@ -71,9 +73,9 @@ public class RobotContainer {
       //joystick esquerdo controla movimentação 
       //joystick direito controla a velocidade angular do robô
     Command baseDriveCommand = drivebase.driveCommand(
-      () -> MathUtil.applyDeadband(-m_driverController.getY() * Math.max(-m_driverController.getRawAxis(3) + 1, 0.3), OperatorConstants.LEFT_X_DEADBAND),
-      () -> MathUtil.applyDeadband(-m_driverController.getX()* Math.max(-m_driverController.getRawAxis(3)+ 1, 0.3), OperatorConstants.LEFT_Y_DEADBAND),
-      () -> -m_driverController.getZ() * Math.max(-m_driverController.getRawAxis(3)+ 1, 0.565));
+      () -> MathUtil.applyDeadband(-m_driverController.getLeftY() * Math.max(-m_driverController.getRightTriggerAxis() + 1, 0.3), OperatorConstants.LEFT_X_DEADBAND),
+      () -> MathUtil.applyDeadband(- m_driverController.getLeftX()* Math.max(-m_driverController.getRightTriggerAxis()+ 1, 0.3), OperatorConstants.LEFT_Y_DEADBAND),
+      () -> -m_driverController.getRightX() * Math.max(m_driverController.getRightTriggerAxis()+ 1, 0.565));
 
     
 
@@ -88,22 +90,22 @@ public class RobotContainer {
    * Use this method to define your trigger->command mappings. Triggers can be created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
    * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
+   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclas   ses for {@link
    * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
   private void configureBindings() {
 
-    m_systemController.rightBumper().toggleOnTrue(new IntakeCoralINCmd(CIntake));
-    m_systemController.leftBumper().toggleOnTrue(new IntakeCoraloutCmd(CIntake));
+    m_systemController.rightBumper().onTrue(new IntakeCoralINCmd(CIntake)).
+    onFalse(new IntakeCoraloutCmd(CIntake));
 
      m_driverController.button(2).toggleOnTrue(new DriveAimAtTarget(drivebase,
-      () -> MathUtil.applyDeadband(-m_driverController.getY() * Math.max(-m_driverController.getRawAxis(3)+ 1, 0.3), Constants.OperatorConstants.LEFT_X_DEADBAND),
-      () -> MathUtil.applyDeadband(-m_driverController.getX() * Math.max(-m_driverController.getRawAxis(3)+ 1, 0.3), Constants.OperatorConstants.LEFT_Y_DEADBAND)));
+      () -> MathUtil.applyDeadband(m_driverController.getLeftX() * Math.max(-m_driverController.getRawAxis(3)+ 1, 0.3), Constants.OperatorConstants.LEFT_X_DEADBAND),
+      () -> MathUtil.applyDeadband(m_driverController.getLeftY() * Math.max(-m_driverController.getRawAxis(3)+ 1, 0.3), Constants.OperatorConstants.LEFT_Y_DEADBAND)));
     
-    m_driverController.button(3).onTrue(Commands.runOnce(drivebase::zeroGyro));
-    m_driverController.button(4).onTrue(Commands.runOnce(drivebase::resetIMU));
+    m_driverController.a().onTrue(Commands.runOnce(drivebase::zeroGyro));
+    m_driverController.b().onTrue(Commands.runOnce(drivebase::resetIMU));
    
   }
 

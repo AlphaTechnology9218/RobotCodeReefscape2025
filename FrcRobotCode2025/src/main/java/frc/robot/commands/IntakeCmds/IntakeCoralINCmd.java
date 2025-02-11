@@ -21,7 +21,7 @@ public class IntakeCoralINCmd extends Command{
 
     @Override
     public void execute() {
-         coralintakeSubsystem.intakemotion (0.4);
+        coralintakeSubsystem.intakemotion (0.4);
         
     }
 
@@ -32,12 +32,12 @@ public class IntakeCoralINCmd extends Command{
 
     @Override
     public boolean isFinished() {
-    if (coralintakeSubsystem.getcurrent()>20){
-        return true;
-    }
-    else{
+        if (coralintakeSubsystem.getcurrent()>20){
+             return true;
+             }
+            else{
         return false;
-    }
+        }
       
     }
 }

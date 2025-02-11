@@ -83,14 +83,14 @@ public class ArmDrivePIDCmd extends Command{
         if (speedS < 0 ){
           armSubsystem.ShouderDrive(0.2);
           armSubsystem.WristDrive(speedW);
-        }
+          }
         else{
           armSubsystem.ShouderDrive(speedS);
           armSubsystem.WristDrive(speedW);
-        }
+          }
       }
   
-    }
+      }
     
   public void end(boolean interrupted) {
     armSubsystem.stopArm();;

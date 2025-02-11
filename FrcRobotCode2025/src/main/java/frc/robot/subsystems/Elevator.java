@@ -56,11 +56,11 @@ public class Elevator extends SubsystemBase{
         leaderConfig.encoder.positionConversionFactor(ElevatorConstants.ArmPosConversionFactor);
         leaderConfig.encoder.velocityConversionFactor(ElevatorConstants.ArmVeloConversionFactor);
 
-        leaderConfig.inverted(true)
+        leaderConfig.inverted(false)
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(40,60)
-        .softLimit.forwardSoftLimitEnabled(true)
-        .reverseSoftLimitEnabled(true)
+        .softLimit.forwardSoftLimitEnabled(false)
+        .reverseSoftLimitEnabled(false)
         .forwardSoftLimit(ElevatorConstants.fwdSoftLimit)
         .reverseSoftLimit(ElevatorConstants.revrsSoftLimit);
 

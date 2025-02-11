@@ -5,17 +5,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.AlgaeIntakeConstants;
 import frc.robot.subsystems.AlgaeIntake;
 
-public class IntakeAlgaINcmd extends Command{
+public class IntakeAlgaHoldCmd extends Command{
     
     AlgaeIntake AlgaeIntakeSubsystem;
-    private double sp, spCollect;
+    private double sp ,spRealease;
     private PIDController intakePidController = new PIDController(AlgaeIntakeConstants.kP,
     AlgaeIntakeConstants.kI, AlgaeIntakeConstants.kD);
 
-    public IntakeAlgaINcmd(AlgaeIntake subsystem){
-        this.AlgaeIntakeSubsystem = subsystem;
-        this.spCollect = AlgaeIntakeConstants.spCollect;
-        this.sp = spCollect;
+    public IntakeAlgaHoldCmd(AlgaeIntake subsystem){
+        this.AlgaeIntakeSubsystem = subsystem; 
+        this.spRealease = AlgaeIntakeConstants.spRealease; 
+        this.sp = spRealease;
         addRequirements(subsystem);
     }
 
@@ -29,11 +29,7 @@ public class IntakeAlgaINcmd extends Command{
     public void execute() {
         intakePidController.setSetpoint(sp);
         double speed = intakePidController.calculate(AlgaeIntakeSubsystem.getEncoder().get());
-            AlgaeIntakeSubsystem.IntakeMoveDrive(speed);
-            AlgaeIntakeSubsystem.intakeDrive(AlgaeIntakeConstants.IntakeCollectSpeed);
-       
-           
-        
+            AlgaeIntakeSubsystem.IntakeMoveDrive(speed);   
     }
 
     @Override

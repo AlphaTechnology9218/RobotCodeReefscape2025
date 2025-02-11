@@ -93,11 +93,18 @@ public final class Constants {
   {
       public static final int IntakeMotorId = 18;
       public static final int MoveMotorId = 17;
-      public static final int limitSwitchChannel = 6;
+      public static final int DutyCycleChannel = 7;
       public static final double MoveMotorFwdSoftLimit = 50;
       public static final double MoveMotorRvrsSoftLimit = 50;
       public static final double IntakeCollectSetPoint = 0;
       public static final double intakeHoldSetPoint = 0;
+      public static final double spCollect = 0;
+      public static final double spRealease = 0;
+      public static final double IntakeCollectSpeed = 0.5;
+      public static final double IntakeRealeaseSpeed = -0.5;
+      public static final double kP = 0;
+      public static final double kI = 0;
+      public static final double kD = 0;
   }
 
   public static final class ArmConstants

@@ -1,11 +1,13 @@
 package frc.robot.commands.IntakeCmds;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CoralIntake;
 
 public class IntakeCoraloutCmd extends Command{
-    
-    CoralIntake coralintakeSubsystem;
+       CoralIntake coralintakeSubsystem;
+       Timer timer;
+       
 
 
     public IntakeCoraloutCmd(CoralIntake subsystem){
@@ -16,12 +18,14 @@ public class IntakeCoraloutCmd extends Command{
 
     @Override
     public void initialize() {
-    
+        timer = new Timer();
+        timer.reset();
     }
 
     @Override
     public void execute() {
-         coralintakeSubsystem.intakemotion (-0.4);
+        coralintakeSubsystem.intakemotion (-0.4);
+        timer.start();
         
     }
 
@@ -32,12 +36,11 @@ public class IntakeCoraloutCmd extends Command{
 
     @Override
     public boolean isFinished() {
-    if (coralintakeSubsystem.getcurrent()>20){
-        return true;
-    }
-    else{
+        if (timer.get() > 1.5){
+            return true; 
+        }
+        else{
         return false;
-    }
-      
+        } 
     }
 }

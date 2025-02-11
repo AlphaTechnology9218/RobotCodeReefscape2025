@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -14,12 +15,15 @@ import frc.robot.Constants.CoralIntakeConstants;
 public class CoralIntake extends SubsystemBase{
     SparkMax intakecoral = new SparkMax (CoralIntakeConstants.IntakeMotorId, MotorType.kBrushless);
     SparkMaxConfig config = new SparkMaxConfig ();
+    RelativeEncoder encoder = intakecoral.getEncoder();
 
         public CoralIntake(){
              config.smartCurrentLimit(20, 40)
              .idleMode(IdleMode.kBrake)
              .openLoopRampRate(.10)
              .inverted(false);
+
+             
 
              intakecoral.configure(config, ResetMode.kResetSafeParameters,
               PersistMode.kNoPersistParameters);
@@ -41,6 +45,7 @@ public class CoralIntake extends SubsystemBase{
         @Override
         public void periodic() {
             SmartDashboard.putNumber("CoralIntakeCurrent", getcurrent());
+            SmartDashboard.putNumber("CoralIntakeSpeed", encoder.getVelocity());
         }
 
 }
